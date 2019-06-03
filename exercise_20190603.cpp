@@ -1,120 +1,66 @@
-
-// press the button it will change to a new pixel animation.  Note that you need to press the
-// button once to start the first animation!
+// NeoPixel Ring simple sketch (c) 2013 Shae Erisson
+// Released under the GPLv3 license to match the rest of the
+// Adafruit NeoPixel library
 
 #include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+ #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
 
-#define PIXEL_LENGTH 9
+// Which pin on the Arduino is connected to the NeoPixels?
+#define PIN        8 // On Trinket or Gemma, suggest changing this to 1
+#define PIN2       9
 
-int brightnessVal = 255;
+// How many NeoPixels are attached to the Arduino?
+#define NUMPIXELS 58 // Popular NeoPixel ring size
 
-// for Pixel Light
-const uint16_t pixelCountArr[PIXEL_LENGTH] = {120, 120, 120, 120};
-const uint8_t pixelPinArr[PIXEL_LENGTH] = {8, 9, 10, 11};
-Adafruit_NeoPixel stripArr[PIXEL_LENGTH];
+// When setting up the NeoPixel library, we tell it how many pixels,
+// and which pin to use to send signals. Note that for older NeoPixel
+// strips you might need to change the third parameter -- see the
+// strandtest example for more information on possible values.
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels2(NUMPIXELS, PIN2, NEO_GRB + NEO_KHZ800);
 
-// for Button
-bool oldState[PIXEL_LENGTH] = {HIGH, HIGH, HIGH, HIGH};
-const uint8_t btnPinArr[PIXEL_LENGTH] = {A5, A4, A3, A2};
-
-//bool waitUnity = false; //for Unity
+#define DELAYVAL 120 // Time (in milliseconds) to pause between pixels
 
 void setup() {
-  Serial.begin(9600);
+  // These lines are specifically to support the Adafruit Trinket 5V 16 MHz.
+  // Any other board, you can remove this part (but no harm leaving it):
+#if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
+  clock_prescale_set(clock_div_1);
+#endif
+  // END of Trinket-specific code.
 
-  InitButton();
-  InitPixel();
+  pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
+  pixels2.begin();
+  pixels.clear(); // Set all pixel colors to 'off'
+  pixels2.clear(); 
+  pixels.show();
+  pixels2.show();
+  delay(1000);
 }
 
 void loop() {
-  CheckUnity();
-  CheckReset();
+  pixels.clear(); // Set all pixel colors to 'off'
+  pixels2.clear(); 
+  
+  
+  // The first NeoPixel in a strand is #0, second is 1, all the way up
+  // to the count of pixels minus one.
+  for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
 
-  CheckButton();
-}
+    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
+    // Here we're using a moderately bright green color:
 
-void CheckUnity() {
-  if (Serial.available() > 0 && Serial.readString() == "99") {
-    ResetPixel();
+
+    pixels.setPixelColor(i, pixels.Color(40, 0, 50));
+
+    pixels.show();   // Send the updated pixel colors to the hardware.
+ 
+    pixels2.setPixelColor(i, pixels.Color(0, 15, 60));
+
+    pixels2.show();
+
+    delay(DELAYVAL);
   }
 }
-
-void CheckReset() {
-  if (Serial.available() > 0 && Serial.readString() == "90") {
-    ResetPixel();
-  }
-}
-
-void ResetPixel() {
-  for (unsigned int i = 0; i < PIXEL_LENGTH; i++) {
-    ReloadColor(stripArr[i], stripArr[i].Color(0, 0, 0));
-  }
-}
-
-void InitPixel() {
-  for (unsigned int i = 0; i < PIXEL_LENGTH; i++) {
-    stripArr[i] = Adafruit_NeoPixel(pixelCountArr[i], pixelPinArr[i], NEO_GRB + NEO_KHZ800);
-    stripArr[i].begin();
-    stripArr[i].show(); // Initialize all pixels to 'off'
-  }
-}
-
-void InitButton() {
-  for (unsigned int i = 0; i < PIXEL_LENGTH; i++) {
-    pinMode(btnPinArr[i], INPUT_PULLUP);
-  }
-}
-
-void CheckButton() {
-  for (unsigned int i = 0; i < PIXEL_LENGTH; i++) {
-    // Get current button state.
-
-    if ( digitalRead(btnPinArr[i] == 1 ) {
-    // Short delay to debounce button.
-
-    ResetPixel();
-
-      LoadColor(stripArr[i], stripArr[i].Color(brightnessVal, brightnessVal, brightnessVal));
-
-      Serial.println(i);
-      return;
-
-
-      bool newState = digitalRead(btnPinArr[i]);
-
-      // Check if state changed from high to low (button press).
-      if (newState == LOW && oldState[i] == HIGH) {
-        // Short delay to debounce button.
-        delay(20);
-        // Check if button is still low after debounce.
-        newState = digitalRead(btnPinArr[i]);
-        if (newState == LOW) {
-          ResetPixel();
-
-          LoadColor(stripArr[i], stripArr[i].Color(brightnessVal, brightnessVal, brightnessVal));
-
-          Serial.println(i);
-          return;
-        }
-      }
-
-      // Set the last button state to the old state.
-      oldState[i] = newState;
-
-    }
-  }
-
-  void LoadColor(Adafruit_NeoPixel & strip, uint32_t c) {
-    for (uint16_t i = strip.numPixels() - 1; i > 0; i--) {
-      strip.setPixelColor(i, c);
-      strip.show();
-      delay(5);
-    }
-  }
-
-  void ReloadColor(Adafruit_NeoPixel & strip, uint32_t c) {
-    for (uint16_t i = strip.numPixels() - 1; i > 0; i--) {
-      strip.setPixelColor(i, c);
-    }
-    strip.show();
-  }
