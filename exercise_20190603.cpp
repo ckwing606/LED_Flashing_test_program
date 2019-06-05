@@ -4,15 +4,20 @@
 
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR__
- #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
 
 // Which pin on the Arduino is connected to the NeoPixels?
 #define PIN        8 // On Trinket or Gemma, suggest changing this to 1
 #define PIN2       9
+#define PIN3       10
 
 // How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS 58 // Popular NeoPixel ring size
+
+#define NUMPIXELS 57 // Popular NeoPixel ring size
+int LED_on_off_1[NUMPIXELS] = {1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1}; //NUMPIXELS = 10, so, init 10 elements.
+int LED_on_off_2[NUMPIXELS] = {0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0};
+int LED_on_off_3[NUMPIXELS] = {0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0};
 
 // When setting up the NeoPixel library, we tell it how many pixels,
 // and which pin to use to send signals. Note that for older NeoPixel
@@ -20,8 +25,9 @@
 // strandtest example for more information on possible values.
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel pixels2(NUMPIXELS, PIN2, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels3(NUMPIXELS, PIN3, NEO_GRB + NEO_KHZ800);
 
-#define DELAYVAL 120 // Time (in milliseconds) to pause between pixels
+#define DELAYVAL 30 // Time (in milliseconds) to pause between pixels
 
 void setup() {
   // These lines are specifically to support the Adafruit Trinket 5V 16 MHz.
@@ -33,34 +39,79 @@ void setup() {
 
   pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
   pixels2.begin();
+  pixels3.begin();
   pixels.clear(); // Set all pixel colors to 'off'
-  pixels2.clear(); 
+  pixels2.clear();
+  pixels3.clear();
   pixels.show();
   pixels2.show();
+  pixels3.show();
+
   delay(1000);
 }
 
 void loop() {
-  pixels.clear(); // Set all pixel colors to 'off'
-  pixels2.clear(); 
-  
-  
+
+
+
   // The first NeoPixel in a strand is #0, second is 1, all the way up
   // to the count of pixels minus one.
-  for(int i=0; i<NUMPIXELS; i++) { // For each pixel...
+
+  for (int i = 0; i < NUMPIXELS; i++) { // For each pixel...
+
+    if ( i % 6 == 0 ) {
+
+      pixels.clear(); // Set all pixel colors to 'off'
+      pixels2.clear();
+      pixels3.clear();
+
+    }
+
 
     // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
     // Here we're using a moderately bright green color:
 
-
-    pixels.setPixelColor(i, pixels.Color(40, 0, 50));
-
+    if (LED_on_off_1[i])
+      pixels.setPixelColor(i, pixels.Color(40, 0, 50));
+    else
+      pixels.setPixelColor(i, pixels.Color(0, 0, 0));
     pixels.show();   // Send the updated pixel colors to the hardware.
- 
-    pixels2.setPixelColor(i, pixels.Color(0, 15, 60));
-
+    if (LED_on_off_2[i])
+      pixels2.setPixelColor(i, pixels2.Color(0, 15, 60));
+    else
+      pixels2.setPixelColor(i, pixels2.Color(0, 0, 0));
     pixels2.show();
-
+    if (LED_on_off_3[i])
+      pixels3.setPixelColor(i, pixels3.Color(0, 15, 60));
+    else
+      pixels3.setPixelColor(i, pixels3.Color(0, 0, 0));
+    pixels3.show();
     delay(DELAYVAL);
+
   }
+  /*
+    for (int i = NUMPIXELS ; i >= 0 ; i--) { // For each pixel...
+
+      // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
+      // Here we're using a moderately bright green color:
+
+
+
+      pixels.clear(); // Set all pixel colors to 'off'
+      pixels2.clear();
+
+      if (LED_on_off_1[i])
+        pixels.setPixelColor(i, pixels.Color(40, 0, 50));
+      else
+        pixels.setPixelColor(i, pixels.Color(0, 0, 0));
+      pixels.show();   // Send the updated pixel colors to the hardware.
+      if (LED_on_off_2[i])
+        pixels2.setPixelColor(i, pixels.Color(0, 15, 60));
+      else
+        pixels2.setPixelColor(i, pixels.Color(0, 0, 0));
+      pixels2.show();
+      delay(DELAYVAL);
+
+    }
+  */
 }
