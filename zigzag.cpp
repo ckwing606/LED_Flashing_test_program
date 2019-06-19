@@ -24,16 +24,20 @@ const uint8_t pixelNum[] = {57, 57, 56, 56, 57, 52};
 //Setting up the address of LED Strips
 Adafruit_NeoPixel strip[stripLength];
 
-////Creating array to make pattern
-//int LED_on_off_1[pixelNum];
-//int LED_on_off_2[NUMPIXELS];
-//int LED_on_off_3[NUMPIXELS];
+//Define a counter to creat pattern on the strip
+int pixelCount = 0;
 
-int pixelCount = 0;   //Define a counter to creat pattern on the strip
-#define maxPixel        57    //Set the maximum pixel number of the pixel strip
-const uint8_t pixelColor[3] = {60, 255, 255};   //Define pixel color with R, G, B value
-const uint8_t resetColor[3] = {0, 0, 0};  //Set the pixel color to black
-byte delayValue = 1000;   //Set delay time for each pixel
+//Set the maximum pixel number of the pixel strip
+#define maxPixel        57
+
+//Define pixel color with R, G, B value
+const uint8_t pixelColor[3] = {60, 255, 255};  
+ 
+//Set the pixel color to black
+const uint8_t resetColor[3] = {0, 0, 0};  
+
+//Set delay time for each pixel
+byte delayValue = 1000;   
 
 bool right = true;
 
