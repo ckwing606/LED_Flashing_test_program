@@ -1,7 +1,7 @@
-/* 
-Program name: WS2812 ZigZag
-Author:       Robin
-Date:         2019-06-19
+/*
+  Program name: WS2812 ZigZag
+  Author:       Robin
+  Date:         2019-06-19
 
 */
 
@@ -12,14 +12,14 @@ Date:         2019-06-19
 #endif
 
 //Define the total number of LED Strip
-#define stripLength     4
+#define stripLength     5
 
 
 //Define Pins connected to WS2812 LED Strip
-const uint8_t pixelPin[stripLength] = {8, 9, 10, 11};//, 12, 13};
+const uint8_t pixelPin[] = {8, 9, 10, 11, 12, 13};
 
 //Define how many pixels for each strip
-const uint8_t pixelNum[stripLength] = {57, 57, 56, 56};//, 57, 52};
+const uint8_t pixelNum[] = {57, 57, 56, 56, 57, 52};
 
 //Setting up the address of LED Strips
 Adafruit_NeoPixel strip[stripLength];
@@ -29,12 +29,13 @@ Adafruit_NeoPixel strip[stripLength];
 //int LED_on_off_2[NUMPIXELS];
 //int LED_on_off_3[NUMPIXELS];
 
-int pixelCount = 0;
+int pixelCount = 0;   //Define a counter to creat pattern on the strip
+#define maxPixel        57    //Set the maximum pixel number of the pixel strip
+const uint8_t pixelColor[3] = {60, 255, 255};   //Define pixel color with R, G, B value
+const uint8_t resetColor[3] = {0, 0, 0};  //Set the pixel color to black
+byte delayValue = 1000;   //Set delay time for each pixel
+
 bool right = true;
-#define maxPixel        57
-const uint8_t anColor[3] = {60, 60, 255};
-const uint8_t resetColor[3] = {0, 0, 0};
-byte delayValue = 10;
 
 void setup() {
   // put your setup code here, to run once:
@@ -46,7 +47,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //lighter(4, anColor);
-  zigZag(anColor);
+  zigZag(pixelColor, resetColor);
 
 }
 
@@ -76,43 +77,57 @@ void lighter(uint8_t color[]) {
 
 }
 
-void zigZag(uint8_t color[]) {
+void zigZag(uint8_t color[], uint8_t reset[]) {
 
   for (int i = 0; i < stripLength; i++) {
-    if (right)
-      pixelCount++;
-    else
-      pixelCount--;
+    //backwardChecker();
+    pixelLooper();
     Serial.println("Forward");
     Serial.println(pixelCount);
-    strip[i].setPixelColor(pixelCount, strip[i].Color(0, 255, 255));
+    strip[i].setPixelColor(pixelCount, strip[i].Color(color[0], color[1], color[2]));
     strip[i].show();
     delay(delayValue);
-    strip[i].setPixelColor(pixelCount, strip[i].Color(0, 0, 0));
+    strip[i].setPixelColor(pixelCount, strip[i].Color(reset[0], reset[1], reset[2]));
     strip[i].show();
     delay(delayValue);
 
   }
 
-  for (int i = stripLength - 1; i >= 0; i--) {
-    if (right)
-      pixelCount++;
-    else
-      pixelCount--;
+  for (int i = stripLength - 2; i > 0; i--) {
+    //backwardChecker();
+    pixelLooper();
     Serial.println("Backward");
     Serial.println(pixelCount);
-    strip[i].setPixelColor(pixelCount, strip[i].Color(255, 255, 0));
+    strip[i].setPixelColor(pixelCount, strip[i].Color(color[0], color[1], color[2]));
     strip[i].show();
     delay(delayValue);
-    strip[i].setPixelColor(pixelCount, strip[i].Color(0, 0, 0));
+    strip[i].setPixelColor(pixelCount, strip[i].Color(reset[0], reset[1], reset[2]));
     strip[i].show();
     delay(delayValue);
   }
+  //backward();
+}
+
+void backward() {
 
   if ( pixelCount > maxPixel ) {
-    right=false;
+    right = false;
   } else if ( pixelCount < 0 ) {
-    right=true;
-    }
-    
+    right = true;
+  }
+
+}
+void backwardChecker() {
+  if (right)
+    pixelCount++;
+  else
+    pixelCount--;
+}
+
+void pixelLooper() {
+  pixelCount++;
+
+  if (pixelCount > maxPixel) {
+    pixelCount = 0;
+  }
 }
