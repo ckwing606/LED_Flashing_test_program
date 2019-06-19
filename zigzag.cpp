@@ -12,7 +12,7 @@
 #endif
 
 //Define the total number of LED Strip
-#define stripLength     5
+#define stripLength     6
 
 
 //Define Pins connected to WS2812 LED Strip
@@ -37,7 +37,7 @@ const uint8_t pixelColor[3] = {60, 255, 255};
 const uint8_t resetColor[3] = {0, 0, 0};  
 
 //Set delay time for each pixel
-byte delayValue = 1000;   
+byte delayValue = 200;   
 
 bool right = true;
 
@@ -84,7 +84,7 @@ void lighter(uint8_t color[]) {
 void zigZag(uint8_t color[], uint8_t reset[]) {
 
   for (int i = 0; i < stripLength; i++) {
-    //backwardChecker();
+    backwardChecker();
     pixelLooper();
     Serial.println("Forward");
     Serial.println(pixelCount);
@@ -98,7 +98,7 @@ void zigZag(uint8_t color[], uint8_t reset[]) {
   }
 
   for (int i = stripLength - 2; i > 0; i--) {
-    //backwardChecker();
+    backwardChecker();
     pixelLooper();
     Serial.println("Backward");
     Serial.println(pixelCount);
@@ -109,11 +109,6 @@ void zigZag(uint8_t color[], uint8_t reset[]) {
     strip[i].show();
     delay(delayValue);
   }
-  //backward();
-}
-
-void backward() {
-
   if ( pixelCount > maxPixel ) {
     right = false;
   } else if ( pixelCount < 0 ) {
@@ -121,16 +116,17 @@ void backward() {
   }
 
 }
+
 void backwardChecker() {
   if (right)
     pixelCount++;
   else
     pixelCount--;
+
+  pixelLooper();
 }
 
 void pixelLooper() {
-  pixelCount++;
-
   if (pixelCount > maxPixel) {
     pixelCount = 0;
   }
