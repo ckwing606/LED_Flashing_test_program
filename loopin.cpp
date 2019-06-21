@@ -42,7 +42,7 @@ const uint8_t resetColor[3] = {255, 0, 0};
 //Set delay time for each pixel
 byte delayValue = 4;
 
-//For lighter() function
+//For looper() function
 uint8_t firstStrip = 0;
 uint8_t lastStrip = stripLength - 1;
 
@@ -59,7 +59,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  lighter(pixelColor);
+  looper(pixelColor);
   
 }
 
@@ -74,7 +74,7 @@ void setupPixel() {
 }
 
 
-void lighter(uint8_t color[3]) {
+void looper(uint8_t color[3]) {
 
   for (int i = firstPixel; i < maxPixel; i++) {
     strip[firstStrip].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
