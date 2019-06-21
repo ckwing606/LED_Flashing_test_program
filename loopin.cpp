@@ -14,6 +14,9 @@
 //Define the total number of LED Strip
 #define stripLength     6
 
+//Set the first and the last pixel number of the pixel strip
+#define firstPixel      11
+#define lastPixel        17
 
 //Define Pins connected to WS2812 LED Strip
 const uint8_t pixelPin[] = {8, 9, 10, 11, 12, 13};
@@ -29,18 +32,14 @@ Adafruit_NeoPixel strip[stripLength];
 //Define a counter to creat pattern on the strip
 int pixelCount = 0;
 
-//Set the maximum pixel number of the pixel strip
-#define firstPixel      11
-#define maxPixel        30
-
 //Define pixel color with R, G, B value
-const uint8_t pixelColor[3] = {60, 0, 255};
+const uint8_t pixelColor[3] = {120, 60, 255};
 
 //Set the pixel color to black
-const uint8_t resetColor[3] = {255, 0, 0};
+const uint8_t resetColor[3] = {0, 0, 0};
 
 //Set delay time for each pixel
-byte delayValue = 60;
+byte delayValue = 5;
 
 //For looper() function
 uint8_t firstStrip = 0;
@@ -76,7 +75,7 @@ void setupPixel() {
 
 void looper(uint8_t color[3]) {
 
-  for (int i = firstPixel; i < maxPixel - 1; i++) {
+  for (int i = firstPixel; i < lastPixel; i++) {
     strip[firstStrip].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
     strip[firstStrip].show();
     delay(delayValue);
@@ -84,15 +83,15 @@ void looper(uint8_t color[3]) {
     strip[firstStrip].show();
   }
 
-  for (int i = 0; i < stripLength; i++) {
-    strip[i].setPixelColor(maxPixel - 1, strip[i].Color(color[0], color[1], color[2]));
+  for (int i = firstStrip; i < stripLength; i++) {
+    strip[i].setPixelColor(lastPixel, strip[i].Color(color[0], color[1], color[2]));
     strip[i].show();
     delay(delayValue);
     strip[i].clear();
     strip[i].show();
   }
 
-  for ( int i = maxPixel - 1; i > firstPixel; i--) {
+  for ( int i = lastPixel; i >= firstPixel; i--) {
     strip[lastStrip].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
     strip[lastStrip].show();
     delay(delayValue);
