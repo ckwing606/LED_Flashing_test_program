@@ -40,7 +40,7 @@ const uint8_t pixelColor[3] = {60, 0, 255};
 const uint8_t resetColor[3] = {255, 0, 0};
 
 //Set delay time for each pixel
-byte delayValue = 4;
+byte delayValue = 60;
 
 //For looper() function
 uint8_t firstStrip = 0;
@@ -76,7 +76,7 @@ void setupPixel() {
 
 void looper(uint8_t color[3]) {
 
-  for (int i = firstPixel; i < maxPixel; i++) {
+  for (int i = firstPixel; i < maxPixel - 1; i++) {
     strip[firstStrip].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
     strip[firstStrip].show();
     delay(delayValue);
@@ -92,7 +92,7 @@ void looper(uint8_t color[3]) {
     strip[i].show();
   }
 
-  for ( int i = maxPixel - 1; i >= firstPixel; i--) {
+  for ( int i = maxPixel - 1; i > firstPixel; i--) {
     strip[lastStrip].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
     strip[lastStrip].show();
     delay(delayValue);
