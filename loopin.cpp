@@ -12,11 +12,11 @@
 #endif
 
 //Define the total number of LED Strip
-#define stripLength     6
+#define stripLength  6
 
 //Set the first and the last pixel number of the pixel strip
-#define firstPixel      11
-#define lastPixel        17
+int firstPixel = 11;
+int lastPixel = 15;
 
 //Define Pins connected to WS2812 LED Strip
 const uint8_t pixelPin[] = {8, 9, 10, 11, 12, 13};
@@ -33,13 +33,13 @@ Adafruit_NeoPixel strip[stripLength];
 int pixelCount = 0;
 
 //Define pixel color with R, G, B value
-const uint8_t pixelColor[3] = {120, 60, 255};
+const uint8_t pixelColor[3] = {0, 80, 255};
 
 //Set the pixel color to black
 const uint8_t resetColor[3] = {0, 0, 0};
 
 //Set delay time for each pixel
-byte delayValue = 5;
+int delayValue = 30;
 
 //For looper() function
 uint8_t firstStrip = 0;
@@ -58,10 +58,16 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  looper(pixelColor);
-  
-}
 
+  //tester(pixelColor);
+  looper(pixelColor, resetColor);
+  
+  Serial.println("----------First loop finished!----------");
+  delayValue = 500;
+  firstStrip += 1;
+  lastStrip -= 1;
+  firstPixel += 1;
+  //lastPixel -= 1;
 
 void setupPixel() {
   for (unsigned int i = 0; i < stripLength; i++) {
@@ -73,37 +79,62 @@ void setupPixel() {
 }
 
 
-void looper(uint8_t color[3]) {
+void looper(uint8_t color[3], uint8_t reset[3]) {
 
   for (int i = firstPixel; i < lastPixel; i++) {
     strip[firstStrip].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
     strip[firstStrip].show();
     delay(delayValue);
-    strip[firstStrip].clear();
+    strip[firstStrip].setPixelColor(i, strip[i].Color(reset[0], reset[1], reset[2]));
     strip[firstStrip].show();
+    Serial.print("firstStrip: ");
+    Serial.print(firstStrip);
+    Serial.print(",");
+    Serial.println(i);
   }
 
-  for (int i = firstStrip; i < stripLength; i++) {
+  for (int i = firstStrip; i <= lastStrip -1; i++) {
     strip[i].setPixelColor(lastPixel, strip[i].Color(color[0], color[1], color[2]));
     strip[i].show();
     delay(delayValue);
-    strip[i].clear();
+    strip[i].setPixelColor(lastPixel, strip[i].Color(reset[0], reset[1], reset[2]));
     strip[i].show();
+    Serial.print("from left to right: ");
+    Serial.print(lastPixel);
+    Serial.print(",");
+    Serial.println(i);
   }
 
-  for ( int i = lastPixel; i >= firstPixel; i--) {
+  for ( int i = lastPixel; i > firstPixel; i--) {
     strip[lastStrip].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
     strip[lastStrip].show();
     delay(delayValue);
-    strip[lastStrip].clear();
+    strip[lastStrip].setPixelColor(i, strip[i].Color(reset[0], reset[1], reset[2]));
     strip[lastStrip].show();
+    Serial.print("lastStrip: ");
+    Serial.print(lastStrip);
+    Serial.print(",");
+    Serial.println(i);
   }
 
-  for (int i = stripLength; i > 0; i--) {
+  for (int i = lastStrip ; i >= 1; i--) {
     strip[i].setPixelColor(firstPixel, strip[i].Color(color[0], color[1], color[2]));
     strip[i].show();
     delay(delayValue);
-    strip[i].clear();
+    strip[i].setPixelColor(firstPixel, strip[i].Color(reset[0], reset[1], reset[2]));
     strip[i].show();
+    Serial.print("from right to left: ");
+    Serial.print(firstPixel);
+    Serial.print(",");
+    Serial.println(i);
   }
+
+
+}
+
+void tester(uint8_t color[3]) {
+
+      strip[0].setPixelColor(51, strip[0].Color(20, 20, 20));
+      strip[0].show();
+  
 }
