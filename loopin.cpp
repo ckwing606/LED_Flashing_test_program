@@ -32,7 +32,7 @@ const uint8_t pixelColor[3] = {0, 80, 255};
 const uint8_t resetColor[3] = {0, 0, 0};
 
 //Set delay time for each pixel
-int delayValue = 100;
+int delayValue = 500;
 
 //Set the first and the last pixel number of the pixel strip
 int firstPixel = 11;
@@ -51,7 +51,7 @@ int  lastPixel_o = lastPixel;
 
 void setup() {
   // put your setup code here, to run once:
-  //Serial.begin(9600);
+  Serial.begin(9600);
   setupPixel();
 }
 
@@ -59,8 +59,8 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  //tester(pixelColor, resetColor);
-  looper(pixelColor, resetColor);
+  tester(pixelColor, resetColor);
+  //looper(pixelColor, resetColor);
 
 //  Serial.println("----------Loop finished!----------");
 //  delayValue = 500;
@@ -93,28 +93,23 @@ void setupPixel() {
 void looper(uint8_t color[3], uint8_t reset[3]) {
 
   for (int i = firstPixel; i < lastPixel; i++) {
-    Serial.print("=========");
-    Serial.println(i);
     strip[firstStrip].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
     strip[firstStrip].show();
     delay(delayValue);
-    strip[firstStrip].setPixelColor(i, strip[i].Color(reset[0], reset[1], reset[2]));
-    strip[firstStrip].show();
+//    strip[firstStrip].setPixelColor(i, strip[i].Color(reset[0], reset[1], reset[2]));
+//    strip[firstStrip].show();
 //    Serial.print("firstStrip: ");
 //    Serial.print(firstStrip);
 //    Serial.print(",");
 //    Serial.println(i);
   }
 
-
-  
-
   for (int i = firstStrip; i < lastStrip ; i++) {
     strip[i].setPixelColor(lastPixel, strip[i].Color(color[0], color[1], color[2]));
     strip[i].show();
     delay(delayValue);
-    strip[i].setPixelColor(lastPixel, strip[i].Color(reset[0], reset[1], reset[2]));
-    strip[i].show();
+//    strip[i].setPixelColor(lastPixel, strip[i].Color(reset[0], reset[1], reset[2]));
+//    strip[i].show();
 //    Serial.print("from left to right: ");
 //    Serial.print(lastPixel);
 //    Serial.print(",");
@@ -148,13 +143,20 @@ void looper(uint8_t color[3], uint8_t reset[3]) {
 }
 
 void tester(uint8_t color[3], uint8_t reset[3]) {
-
-  for ( int i = 0; i < 57; i++ ){
-    strip[0].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
-    strip[0].show();
+  
+    for (int i = firstPixel; i < lastPixel; i++) {
+    strip[firstStrip].setPixelColor(i, strip[i].Color(color[0], color[1], color[2]));
+    strip[firstStrip].show();
     delay(delayValue);
-    strip[0].setPixelColor(i, strip[i].Color(reset[0], reset[1], reset[2]));
-    strip[0].show();
+    if (i = lastPixel - 1)
+      strip[firstStrip].clear();
+//    strip[firstStrip].clear();
+//    strip[firstStrip].setPixelColor(i, strip[i].Color(reset[0], reset[1], reset[2]));
+//    strip[firstStrip].show();
+    Serial.print("firstStrip: ");
+    Serial.print(firstStrip);
+    Serial.print(",");
+    Serial.println(i);
   }
-
+    
 }
